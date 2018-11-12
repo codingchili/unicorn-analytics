@@ -17,9 +17,8 @@ The raspberry pi needs python 3.5+ to support await/async.
 Modules that needs to be installed,
 
 ```
-pip3 install --upgrade oauth2client 
-pip3 install --upgrade aiohttp
-pip3 install --upgrade httplib2
+pip3 install oauth2client aiohttp httplib2
+pip3 install unicornhathd numpy
 ```
 
 - aiohttp: to asynchronously update the statistics without disturbing the animations.
