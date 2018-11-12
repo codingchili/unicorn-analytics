@@ -40,7 +40,7 @@ Make sure you have configured everything first :smirk:
 - Google Analytics
 - YouTube Analytics
 
-### Setup
+### Configuration
 Perform the following and update `config/analytics.json` and `config/youtube.json`
 
 - create a new Google Analytics project, grab the view ID.
