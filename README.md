@@ -6,9 +6,9 @@ and video views are visualized as a snake crawling over the unicorn display. One
 If you don't have that many views you can set a scaling factor - for example we can retrieve the statistics
 over the last week; and display them over 5 minutes - then refresh the statistics and play them again for 5 minutes.
 
-![sample image from internet](https://cdn-shop.adafruit.com/product-videos/320x240/3580-03.jpg)
+![sample image from internet](https://thumbs.gfycat.com/ConventionalFrightenedBorzoi-size_restricted.gif)
 
-Placehholder [image](https://www.adafruit.com/product/3580) of the unicorn HD hat
+GIF of me running the unicorn-analytics on a Raspberry PI 3, replaying page loads and youtube views for the last week over 5 minutes. I used the configuration that is checked in here: [unicorn-analytics/config](https://github.com/codingchili/unicorn-analytics/tree/master/config)
 
 # Setup
 You need at least one raspberry pi with a unicorn HAT. 
