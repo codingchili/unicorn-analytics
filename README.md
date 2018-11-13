@@ -10,6 +10,8 @@ over the last week; and display them over 5 minutes - then refresh the statistic
 
 GIF of me running the unicorn-analytics on a Raspberry PI 3, replaying page loads and youtube views for the last week over 5 minutes. I used the configuration that is checked in here: [unicorn-analytics/config](https://github.com/codingchili/unicorn-analytics/tree/master/config)
 
+Related project: [pi-zero-ethermeter](https://github.com/codingchili/pi-zero-ethermeter)
+
 # Setup
 You need at least one raspberry pi with a unicorn HAT. 
 The raspberry pi needs python 3.5+ to support await/async.
