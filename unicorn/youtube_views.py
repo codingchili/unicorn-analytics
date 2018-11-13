@@ -14,6 +14,8 @@ headers = {
 
 
 async def get_views(channel):
+    """ retrieve the amount of views for the given channel ID. """
+
     params['ids'] = 'channel==' + channel
     params['startDate'] = week()
     params['endDate'] = today()

@@ -7,7 +7,7 @@ from .api_call import on_loop
 
 
 async def update():
-    """ sample main. """
+    """ updates the analytics data using google APIs. """
     while True:
         print(await youtube_views(youtube_config()['channel']))
 
@@ -19,6 +19,7 @@ async def update():
 
 
 async def render():
+    """ renders the analytics data onto the unicorn hat. """
     while True:
         print('hat update for 1s.')
         await asyncio.sleep(1)

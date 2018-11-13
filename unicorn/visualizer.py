@@ -1,38 +1,37 @@
 #!/usr/bin/env python
 
-import os
 import random
 import time
 
-from random import randint
-
 import unicornhathd
 
+
 class Visualizer:
+    """ manages a bunch of snakes. """
     
     def __init__(self):
         self.idth, self.height = unicornhathd.get_shape()
         self.pythons = set([])
 
-
-    def hex_to_rgb(self, hex):
+    @staticmethod
+    def hex_to_rgb(hex_color):
         """ thanks to: https://gist.github.com/matthewkremer/3295567 """
-        hex = hex.lstrip('#')
-        hlen = len(hex)
-        return tuple(int(hex[i:i+hlen/3], 16) for i in range(0, hlen, hlen/3))
+        hex_color = hex_color.lstrip('#')
+        hlen = len(hex_color)
+        return tuple(int(hex[i:i+hlen/3], 16) for i in range(0, hlen, int(hlen/3)))
 
-
-    def add_python(self, color, size=1):
+    def add_python(self, color, length=3):
         """ adds a new snake. """
-        color = self.hex_to_rgb(color)
-        self.pythons.add(Python(unicornhathd, color))
+        color = Visualizer.hex_to_rgb(color)
+        self.pythons.add(Python(unicornhathd, color, length=length))
 
-    
-    def filter_python(self, python):
+    @staticmethod
+    def filter_python(python):
+        """ indicates if the python is alive and well. """
         return not python.remove
 
-
     def render(self):
+        """ draws and updates all pythons in the visualizer. """
         try:
             unicornhathd.clear()
                 
@@ -40,7 +39,7 @@ class Visualizer:
                 python.update(dir)
                 python.draw()
 
-            self.pythons = set(filter(self.filter_python, self.pythons))
+            self.pythons = set(filter(Visualizer.filter_python, self.pythons))
             unicornhathd.show()
 
         except KeyboardInterrupt:
@@ -49,35 +48,29 @@ class Visualizer:
        
 
 class Python:
+    """ Pythons slither across the LED matrix gracefully: code adapted from Pimoroni examples. """
     
-    def __init__(self, canvas, color):
+    def __init__(self, canvas, color, length=3):
         self.position = (0, random.randint(0, 16))
         self.velocity = (1, 0)
 
         self.remove = False
-        self.length = 3
-        self.score = 0
+        self.grow_speed = 1
+        self.length = length
         self.tail = []
         self.colour_head = (color[0], color[1], color[2])
-        self.colour_tail = (color[0] / 3, color[1] / 3, color[2] / 3)
+        self.colour_tail = (int(color[0] / 3), int(color[1] / 3), int(color[2] / 3))
         self.canvas = canvas
-        self.eaten = []
-        self.grow_speed = 1
-
-    def shrink(self):
-        if self.length > 1:
-            self.length -= 1
-            self.tail = self.tail[-self.length:]
-        if len(self.eaten) > 0:
-            self.eaten.pop(0)
 
     def get_colour(self, x, y):
+        """ gets the color of the head or tail, depending on the given coordinates. """
         if (x, y) == self.position:
             return self.colour_head
         elif (x, y) in self.tail:
             return self.colour_tail
 
     def draw(self):
+        """ renders the snake onto the unicorn hat HD. """
         none_drawable = True
 
         for position in [self.position] + self.tail:
@@ -88,17 +81,11 @@ class Python:
                 self.canvas.set_pixel(x, y, r, g, b)
                 none_drawable = False
 
-        for idx, colour in enumerate(self.eaten):
-            r, g, b = colour
-            self.canvas.set_pixel(idx, 14, r >> 1, g >> 1, b >> 1)
-
         if none_drawable:
             self.remove = True
 
-    def num_eaten(self):
-        return len(self.eaten)
-
     def update(self, direction=''):
+        """ updates a snake position and optionally changes its direction. """
         x, y = self.position
 
         if direction == 'left' and self.velocity != (1, 0):
@@ -116,11 +103,6 @@ class Python:
         v_x, v_y = self.velocity
         x += v_x
         y += v_y
-        c_x, c_y = self.canvas.get_shape()
-        c_y -= 3 # 3 pixels along the top for score
-       
-        #x %= c_x
-        #y %= c_y
 
         if (x, y) in self.tail:
             return False
@@ -131,7 +113,9 @@ class Python:
 
         return True
 
+
 visualizer = Visualizer()
+
 while True:
     visualizer.render()
     time.sleep(0.1)

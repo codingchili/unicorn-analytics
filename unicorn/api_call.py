@@ -5,6 +5,7 @@ loop = None
 
 def on_loop(the_loop):
     """ sets the event loop to use for the http client. """
+    global loop
     loop = the_loop
 
 

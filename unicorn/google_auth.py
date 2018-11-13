@@ -17,6 +17,7 @@ SCOPE_ANALYTICS = 'https://www.googleapis.com/auth/analytics ' \
 
 
 def authenticate(api_name):
+    """ authenticates using OAUTH2 with the given API. """
     if not os.path.isfile(credentials_file(api_name)):
         # if there is no credentials: run the flow.
         flow = flow_from_clientsecrets(secret_file(api_name),
@@ -38,6 +39,7 @@ def authenticate(api_name):
 
 
 def get_scope(api):
+    """ returns the credentials scope required for interacting with the given API. """
     if api == API_YOUTUBE:
         return SCOPE_YOUTUBE
     elif api == API_ANALYTICS:
@@ -47,8 +49,10 @@ def get_scope(api):
 
 
 def credentials_file(api_name):
+    """ returns a path to the file where credentials are to be stored. """
     return 'api_keys/' + api_name + '_credentials.json'
 
 
 def secret_file(api_name):
+    """ returns a path to the file where the client secret is stored. """
     return 'api_keys/' + api_name + '_secret.json'

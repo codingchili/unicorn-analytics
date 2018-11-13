@@ -13,6 +13,8 @@ headers = {
 
 
 async def get_views(view_id):
+    """ retrieves the number of page loads for the given view ID. """
+
     params['ids'] = view_id
     params['start-date'] = week()
     params['end-date'] = today()
