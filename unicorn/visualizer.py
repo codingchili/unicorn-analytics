@@ -14,11 +14,10 @@ class Visualizer:
         self.pythons = set([])
 
     @staticmethod
-    def hex_to_rgb(hex_color):
-        """ thanks to: https://gist.github.com/matthewkremer/3295567 """
-        hex_color = hex_color.lstrip('#')
-        hlen = len(hex_color)
-        return tuple(int(hex[i:i+hlen/3], 16) for i in range(0, hlen, int(hlen/3)))
+    def hex_to_rgb(color):
+        color = color.lstrip('#')
+        color = (color[0:2], color[2:4], color[4:6])
+        return [int(x, 16) for x in color]
 
     def add_python(self, color, length=3):
         """ adds a new snake. """
@@ -30,21 +29,19 @@ class Visualizer:
         """ indicates if the python is alive and well. """
         return not python.remove
 
+    def close(self):
+        unicornhathd.off()
+
     def render(self):
         """ draws and updates all pythons in the visualizer. """
-        try:
-            unicornhathd.clear()
-                
-            for python in self.pythons:
-                python.update(dir)
-                python.draw()
+        unicornhathd.clear()
+            
+        for python in self.pythons:
+            python.update(dir)
+            python.draw()
 
-            self.pythons = set(filter(Visualizer.filter_python, self.pythons))
-            unicornhathd.show()
-
-        except KeyboardInterrupt:
-            unicornhathd.off()
-            pass
+        self.pythons = set(filter(Visualizer.filter_python, self.pythons))
+        unicornhathd.show()
        
 
 class Python:
@@ -113,10 +110,3 @@ class Python:
 
         return True
 
-
-visualizer = Visualizer()
-
-while True:
-    visualizer.render()
-    time.sleep(0.1)
-    visualizer.add_python('#ff00cc')

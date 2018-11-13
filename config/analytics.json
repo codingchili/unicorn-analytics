@@ -3,22 +3,22 @@
     {
       "id": "ga:184842397",
       "name": "zapperfly",
-      "color": "#00b8d4"
+      "color": "#FF9800"
     },
     {
       "id": "ga:184870485",
       "name": "mithril",
-      "color": "#3caed2"
+      "color": "#49D3ff"
     },
     {
       "id": "ga:184847705",
       "name": "excelastic",
-      "color": "#9954bb"
+      "color": "#FF00C7"
     },
     {
       "id": "ga:184768884",
       "name": "ethereum-ingest",
-      "color": "#993232"
+      "color": "#FF0000"
     }
   ]
 }
