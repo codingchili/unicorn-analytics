@@ -2,22 +2,22 @@
   "views": [
     {
       "id": "ga:184842397",
-      "name": "zapperfly",
+      "name": "https://zapperfly.com/",
       "color": "#D67900"
     },
     {
       "id": "ga:184870485",
-      "name": "mithril",
+      "name": "https://kibana-mithril.com/",
       "color": "#49D3ff"
     },
     {
       "id": "ga:184847705",
-      "name": "excelastic",
+      "name": "https://excelastic.com/",
       "color": "#FF00C7"
     },
     {
       "id": "ga:184768884",
-      "name": "ethereum-ingest",
+      "name": "https://ethereum-ingest.com/",
       "color": "#FF0000"
     }
   ]

@@ -23,25 +23,23 @@ async def update():
         logging.info('updating statistics from Google API..')
 
         for view in youtube_config()['channels']:
-            views = await youtube_views(youtube_config()['channel'])
+            views = await youtube_views(view['channel'])
             analytics[view['name']] = create_data(view, views)
 
         for view in analytics_config()['views']:
             views = await analytics_views(view['id']) 
             analytics[view['name']] = create_data(view, views)
 
+        logging.info('next update in {}s.'.format(REFRESH_ANALYTICS_SECONDS))
         await asyncio.sleep(REFRESH_ANALYTICS_SECONDS)
 
 def create_data(view, views):
-    logging.info(view['name'] + ' ' + views)
+    logging.info('update ' + str(views) + ' views @ ' + view['name'])
     return {
         'views': int(views),
         'color': view['color'],
         'delta': 0.0
     }
-
-
-def log():
 
 
 async def render():
@@ -65,6 +63,11 @@ loop = asyncio.get_event_loop()
 on_loop(loop)
 
 try:
+    startup = 'playing events over {}s, updating every {}s, frame time {}s.'
+    startup = startup.format(TIME_SCALE_SECONDS, REFRESH_ANALYTICS_SECONDS, FRAME_TIME)
+
+    logging.info(startup)
+
     loop.create_task(update())
     loop.create_task(render())
     loop.run_forever()
