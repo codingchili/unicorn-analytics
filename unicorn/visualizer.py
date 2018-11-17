@@ -12,6 +12,7 @@ class Visualizer:
     def __init__(self):
         self.idth, self.height = unicornhathd.get_shape()
         self.pythons = set([])
+        unicornhathd.brightness(0.5)
 
     @staticmethod
     def hex_to_rgb(color):

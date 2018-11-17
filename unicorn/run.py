@@ -7,7 +7,8 @@ from .config import youtube_config, analytics_config
 from .api_call import on_loop
 from .visualizer import Visualizer
 
-TIME_SCALE_SECONDS = 300
+REFRESH_ANALYTICS_SECONDS = 300
+TIME_SCALE_SECONDS = 900
 FRAME_TIME = 0.08
 
 analytics = {}
@@ -31,7 +32,7 @@ async def update():
                 'delta': 0.0
             }
 
-        await asyncio.sleep(30)
+        await asyncio.sleep(REFRESH_ANALYTICS_SECONDS)
 
 
 async def render():
