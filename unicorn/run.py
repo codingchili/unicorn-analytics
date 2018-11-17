@@ -17,6 +17,7 @@ logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
 analytics = {}
 visualizer = Visualizer()
 
+
 async def update():
     """ updates the analytics data using google APIs. """
     while True:
@@ -32,6 +33,7 @@ async def update():
 
         logging.info('next update in {}s.'.format(REFRESH_ANALYTICS_SECONDS))
         await asyncio.sleep(REFRESH_ANALYTICS_SECONDS)
+
 
 def create_data(view, views):
     logging.info('update ' + str(views) + ' views @ ' + view['name'])
