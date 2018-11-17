@@ -1,4 +1,6 @@
 {
-  "channel": "MINE",
-  "color": "#00FF00"
+  "channels": [{
+    "channel": "MINE",
+    "color": "#00FF00"
+  }]
 }

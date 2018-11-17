@@ -22,4 +22,10 @@ async def get_views(channel):
 
     headers['authorization'] = 'Bearer ' + authenticate(API_YOUTUBE)
 
-    return (await get(url, headers, params))['rows'][0][0]
+    views = 0
+    response = await get(url, headers, params)
+    
+    if (len(response['rows']) > 0 and len(response['rows'][0]) > 0:
+        views = response['rows'][0][0]
+
+    return views
