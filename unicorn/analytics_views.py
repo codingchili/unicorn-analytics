@@ -23,7 +23,7 @@ async def get_views(view_id):
     views = 0
     response = await get(url, headers, params)
 
-    if (len(response['rows']) > 0 and len(response['rows'][0]) > 0):
+    if ('rows' in response and len(response['rows']) > 0 and len(response['rows'][0]) > 0):
         views = response['rows'][0][0]
 
     return views
