@@ -18,7 +18,7 @@ The raspberry pi needs python 3.5+ to support await/async.
 
 Modules that **needs** to be installed,
 
-```
+```console
 pip3 install oauth2client aiohttp
 pip3 install unicornhathd numpy
 ```
@@ -30,7 +30,7 @@ pip3 install unicornhathd numpy
 Now is a good time to **configure your google APIs**, see the section on **Configuration**.
 
 To start it all up run,
-```
+```console
 git clone https://github.com/codingchili/unicorn-analytics
 cd unicorn-analytics
 python -m unicorn.run
@@ -78,7 +78,7 @@ https://developers.google.com/api-client-library/python/guide/aaa_oauth#the-oaut
 With this we can actually generate oauth2 tokens without requiring a browser to be opened on the PI. If you 
 don't have a browser available in your environment please pass the commandline parameter
 
-```
+```console
 --noauth_local_webserver
 ```
 
