@@ -15,3 +15,8 @@ def youtube_config():
 def analytics_config():
     """ returns the configuration for google analytics. """
     return load_json('config/analytics.json')
+
+
+def server_config():
+    """ returns the configuration for the api server """
+    return load_json('config/server.json')

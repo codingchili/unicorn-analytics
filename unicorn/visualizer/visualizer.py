@@ -1,16 +1,14 @@
-#!/usr/bin/env python
-
 import random
-import time
-
 import unicornhathd
+
+MAX_PYTHONS = 64
 
 
 class Visualizer:
     """ manages a bunch of snakes. """
-    
+
     def __init__(self):
-        self.idth, self.height = unicornhathd.get_shape()
+        self.width, self.height = unicornhathd.get_shape()
         self.pythons = set([])
         unicornhathd.brightness(0.5)
 
@@ -20,10 +18,14 @@ class Visualizer:
         color = (color[0:2], color[2:4], color[4:6])
         return [int(x, 16) for x in color]
 
-    def add_python(self, color, length=3):
+    def add_python(self, color, length=3, direction='left'):
         """ adds a new snake. """
         color = Visualizer.hex_to_rgb(color)
-        self.pythons.add(Python(unicornhathd, color, length=length))
+
+        if len(self.pythons) < MAX_PYTHONS:
+            self.pythons.add(Python(unicornhathd, color, length=length, direction=direction))
+        else:
+            raise Exception("python nest is full!")
 
     @staticmethod
     def filter_python(python):
@@ -36,24 +38,22 @@ class Visualizer:
     def render(self):
         """ draws and updates all pythons in the visualizer. """
         unicornhathd.clear()
-            
+
         for python in self.pythons:
-            python.update(dir)
+            python.update()
             python.draw()
 
         self.pythons = set(filter(Visualizer.filter_python, self.pythons))
         unicornhathd.show()
-       
+
 
 class Python:
     """ Pythons slither across the LED matrix gracefully: code adapted from Pimoroni examples. """
-    
-    def __init__(self, canvas, color, length=3):
-        self.position = (0, random.randint(0, 16))
-        self.velocity = (1, 0)
 
+    def __init__(self, canvas, color, length=3, direction='left'):
+        self.position = (0, random.randint(0, 16))
+        self.velocity = self.get_velocity(direction)
         self.remove = False
-        self.grow_speed = 1
         self.length = length
         self.tail = []
         self.colour_head = (color[0], color[1], color[2])
@@ -82,22 +82,23 @@ class Python:
         if none_drawable:
             self.remove = True
 
-    def update(self, direction=''):
+    @staticmethod
+    def get_velocity(direction):
+        if direction == 'left':
+            return -1, 0
+
+        if direction == 'right':
+            return 1, 0
+
+        if direction == 'up':
+            return 0, 1
+
+        if direction == 'down':
+            return 0, -1
+
+    def update(self):
         """ updates a snake position and optionally changes its direction. """
         x, y = self.position
-
-        if direction == 'left' and self.velocity != (1, 0):
-            self.velocity = (-1, 0)
-
-        if direction == 'right' and self.velocity != (-1, 0):
-            self.velocity = (1, 0)
-
-        if direction == 'up' and self.velocity != (0, -1):
-            self.velocity = (0, 1)
-
-        if direction == 'down' and self.velocity != (0, 1):
-            self.velocity = (0, -1)
-
         v_x, v_y = self.velocity
         x += v_x
         y += v_y
@@ -110,4 +111,3 @@ class Python:
         self.position = (x, y)
 
         return True
-

@@ -1,16 +1,11 @@
+import asyncio
 import aiohttp
-
-loop = None
-
-
-def on_loop(the_loop):
-    """ sets the event loop to use for the http client. """
-    global loop
-    loop = the_loop
 
 
 async def get(url, headers=None, params=None):
     """ issues a POST request for the given url. """
+    loop = asyncio.get_event_loop()
+
     if params is None:
         params = {}
     if headers is None:

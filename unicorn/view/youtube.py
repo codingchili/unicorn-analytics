@@ -1,6 +1,6 @@
-from .google_auth import authenticate, API_YOUTUBE
-from .date_param import today, week
-from .api_call import get
+from unicorn.view.google_auth import authenticate, API_YOUTUBE
+from unicorn.util.date_param import today, week
+from unicorn.view.api_call import get
 
 url = 'https://content-youtubeanalytics.googleapis.com/v2/reports'
 params = {

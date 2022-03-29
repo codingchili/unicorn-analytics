@@ -1,80 +1,36 @@
 import asyncio
-import time
 import logging
+import argparse
 
-from .youtube_views import get_views as youtube_views
-from .analytics_views import get_views as analytics_views
-from .config import youtube_config, analytics_config
-from .api_call import on_loop
-from .visualizer import Visualizer
+from unicorn.util.ansi import *
+from unicorn.view.engine import close as close_views, start as start_views
+from unicorn.server.api import start as start_server
 
-REFRESH_ANALYTICS_SECONDS = 300
-TIME_SCALE_SECONDS = 900
-FRAME_TIME = 0.08
+parser = argparse.ArgumentParser(description='Unicorn Analytics.')
+parser.add_argument('--server', help='enable the blinkt api server.', action='store_const', const=True)
+parser.add_argument('--youtube', help='enable the youtube analytics view.', action='store_const', const=True)
+parser.add_argument('--analytics', help='enable the google analytics view.', action='store_const', const=True)
+parser.add_argument('--port', help='port to use when server is enabled. (9990)', nargs='?', const=1, default=9990)
 
-logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
+logging.basicConfig(format=f'{magenta("%(asctime)s")} [%(levelname)s] %(message)s', level=logging.INFO)
+logger = logging.getLogger()
+args = parser.parse_args()
 
-analytics = {}
-visualizer = Visualizer()
-
-
-async def update():
-    """ updates the analytics data using google APIs. """
-    while True:
-        logging.info('updating statistics from Google API..')
-
-        for view in youtube_config()['channels']:
-            views = await youtube_views(view['channel'])
-            analytics[view['name']] = create_data(view, views)
-
-        for view in analytics_config()['views']:
-            views = await analytics_views(view['id']) 
-            analytics[view['name']] = create_data(view, views)
-
-        logging.info('next update in {}s.'.format(REFRESH_ANALYTICS_SECONDS))
-        await asyncio.sleep(REFRESH_ANALYTICS_SECONDS)
-
-
-def create_data(view, views):
-    logging.info('update ' + str(views) + ' views @ ' + view['name'])
-    return {
-        'views': int(views),
-        'color': view['color'],
-        'delta': 0.0
-    }
-
-
-async def render():
-    """ renders the analytics data onto the unicorn hat. """
-    while True:
-        for name in analytics:
-            stats = analytics[name]
-            stats['delta'] += FRAME_TIME * (stats['views'] / TIME_SCALE_SECONDS)
-
-            while stats['delta'] > 1:
-                stats['delta'] -= 1
-                visualizer.add_python(stats['color'])
-        
-        visualizer.render()
-        await asyncio.sleep(FRAME_TIME)
-
-
-loop = asyncio.get_event_loop()
-
-# set the event loop for the HTTP client.
-on_loop(loop)
-
+loop = asyncio.new_event_loop()
 try:
-    startup = 'playing events over {}s, updating every {}s, frame time {}s.'
-    startup = startup.format(TIME_SCALE_SECONDS, REFRESH_ANALYTICS_SECONDS, FRAME_TIME)
+    if args.server and (args.youtube or args.analytics):
+        logger.info("cannot enable both the api server and views.")
 
-    logging.info(startup)
-
-    loop.create_task(update())
-    loop.create_task(render())
-    loop.run_forever()
+    if args.youtube or args.analytics:
+        loop.create_task(start_views(args))
+        loop.run_forever()
+    elif args.server:
+        loop.create_task(start_server(args.port))
+        loop.run_forever()
+    else:
+        logger.info('specify either server mode (--server) or view mode (--youtube, --analytics).')
 except KeyboardInterrupt:
     pass
 finally:
-    visualizer.close()
-    loop.close()
+    close_views()
+   # loop.close()
