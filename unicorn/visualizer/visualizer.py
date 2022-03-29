@@ -69,14 +69,14 @@ class Python:
             if direction is 'left':
                 x = 15
             else:
-                x = 0
+                x = 6
 
         if direction in ['up', 'down']:
             x = random.randint(0, 15)
             if direction is 'up':
                 y = 15
             else:
-                y = 0
+                y = 6
 
         return x, y
 
