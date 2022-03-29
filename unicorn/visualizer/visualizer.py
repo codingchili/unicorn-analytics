@@ -51,7 +51,7 @@ class Python:
     """ Pythons slither across the LED matrix gracefully: code adapted from Pimoroni examples. """
 
     def __init__(self, canvas, color, length=3, direction='left'):
-        self.position = (0, random.randint(0, 16)) if direction in ['left', 'right'] else (random.randint(0, 16), 0)
+        self.position = Python.start_position(direction)
         self.velocity = self.get_velocity(direction)
         self.active = True
         self.length = length
@@ -59,6 +59,26 @@ class Python:
         self.color_head = (color[0], color[1], color[2])
         self.color_tail = (int(color[0] / 4), int(color[1] / 4), int(color[2] / 4))
         self.canvas = canvas
+
+    @staticmethod
+    def start_position(direction):
+        x, y = 0, 0
+
+        if direction in ['left', 'right']:
+            y = random.randint(0, 15)
+            if direction is 'left':
+                x = 15
+            else:
+                x = 0
+
+        if direction in ['up', 'down']:
+            x = random.randint(0, 15)
+            if direction is 'up':
+                y = 15
+            else:
+                y = 0
+
+        return x, y
 
     def get_color(self, x, y):
         """ gets the color of the head or tail, depending on the given coordinates. """

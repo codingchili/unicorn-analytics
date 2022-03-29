@@ -1,9 +1,10 @@
 import asyncio
-import aiohttp
 import logging
 import argparse
 import json
 
+from shipper.transport.websocket import write_ws
+from shipper.transport.rest import write_http
 from shipper.util.ansi import *
 
 logging.basicConfig(format=f'{magenta("%(asctime)s")} [%(levelname)s] %(message)s', level=logging.INFO)
@@ -16,52 +17,8 @@ parser.add_argument('--file', help='the file to tail.')
 parser.add_argument('--token', help='token used for authentication.')
 args = parser.parse_args()
 
-websocket = None
-events = 0
-
 POLL_INTERVAL = 0.02
-
-
-async def write_http(data):
-    async with aiohttp.ClientSession() as session:
-        async with session.post(args.server, json=data) as response:
-            await response.text()
-
-
-async def write_ws(data):
-    global websocket
-
-    if websocket is None or websocket.closed:
-        session = aiohttp.ClientSession()
-        websocket = await session.ws_connect(args.server)
-
-    await websocket.send_json(data)
-
-
-async def post(data):
-    if 'ws://' in args.server:
-        await write_ws(data)
-    elif 'http://' in args.server:
-        await write_http(data)
-    else:
-        logger.warning(f"{red('unknown')} protocol expected {cyan('ws://')} or {cyan('http://')}.")
-        asyncio.get_event_loop().stop()
-
-
-async def process(line):
-    global events
-    try:
-        data = json.loads(line)
-        # process, filter etc.
-        events += 1
-        #data["length"] = 3
-        #data["color"] = '#ff00cc'
-        #data["direction"] = 'right'
-        data["reason"] = "testing the api"
-        data["token"] = args.token
-        await post(data)
-    except Exception as e:
-        logger.warning(f"event error: '{yellow(str(e))}'")
+events = 0
 
 
 async def reader():
@@ -81,6 +38,32 @@ async def reader():
         else:
             line = line[:-1]
             loop.create_task(process(line))
+
+
+async def process(line):
+    global events
+    try:
+        data = json.loads(line)
+        # process, filter etc.
+        events += 1
+        # data["length"] = 3
+        # data["color"] = '#ff00cc'
+        # data["direction"] = 'right'
+        data["reason"] = "testing the api"
+        data["token"] = args.token
+        await write(data)
+    except Exception as e:
+        logger.warning(f"event error: '{yellow(str(e))}'")
+
+
+async def write(data):
+    if 'ws://' in args.server:
+        await write_ws(data, args.server)
+    elif 'http://' in args.server:
+        await write_http(data, args.server)
+    else:
+        logger.warning(f"{red('unknown')} protocol expected {cyan('ws://')} or {cyan('http://')}.")
+        asyncio.get_event_loop().stop()
 
 
 async def stats():
