@@ -79,6 +79,7 @@ async def websocket_handler(request):
             await ws.send_json(process(await ws.receive_str()))
         except:
             logger.info(f'websocket connection {red("closed")}.')
+            break
 
 
 def process(data):
