@@ -74,9 +74,9 @@ class Python:
         if direction in ['up', 'down']:
             x = random.randint(0, 15)
             if direction == 'up':
-                y = 15
-            else:
                 y = 0
+            else:
+                y = 15
 
         return x, y
 
