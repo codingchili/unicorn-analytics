@@ -2,6 +2,7 @@ import asyncio
 import logging
 import argparse
 import json
+import re
 
 from shipper.transport.websocket import write_ws
 from shipper.transport.rest import write_http
@@ -19,6 +20,9 @@ args = parser.parse_args()
 
 POLL_INTERVAL = 0.02
 events = 0
+
+# note this is not perfect for the 172.16.x.x private range.
+private_pattern = re.compile('(192\\.168.*)|(10\\..*)|(172\\.[1-3]+.*)')
 
 
 async def reader():
@@ -40,18 +44,48 @@ async def reader():
             loop.create_task(process(line))
 
 
+def private_ip(ip):
+    global private_pattern
+    return private_pattern.match(ip)
+
+
+def color_proto(proto, app):
+    # move to configuration.
+    app_colors = {
+        "dhcp": "#ffb500",  # yellow
+        "dns": "#ff0000",  # red
+        "tls": "#c90076",  # pink
+        "http": "#ff0000"  # red
+    }
+    proto_colors = {
+        "UDP": "#00eeff",  # blue
+        "TCP": "#00ff00",  # green
+        "ICMP": "#ffb500",  # yellow
+        "IPv6-ICMP": "#ffb500"  # yellow
+    }
+    if app in app_colors:
+        return app_colors[app]
+    elif proto in proto_colors:
+        return proto_colors[proto]
+    return "#242424"
+
+
 async def process(line):
     global events
     try:
-        data = json.loads(line)
-        # process, filter etc.
+        event = json.loads(line)
+        request = {}
         events += 1
-        # data["length"] = 3
-        # data["color"] = '#ff00cc'
-        # data["direction"] = 'right'
-        data["reason"] = "testing the api"
-        data["token"] = args.token
-        await write(data)
+
+        if 'flow' in event and 'proto' in event and event['event_type'] == 'flow':
+            packets = event['flow']['pkts_toserver'] + event['flow']['pkts_toclient']
+            request["length"] = min(int(packets / 100) + 2, 10)
+            request["direction"] = 'up' if private_ip(event["src_ip"]) else 'down'
+            request["color"] = color_proto(event['proto'], event.get('app_proto', 'failed'))
+            request["reason"] = "eve-shipper"
+            request["token"] = args.token
+            print(request)
+            await write(request)
     except Exception as e:
         logger.warning(f"event error: '{yellow(str(e))}'")
 
