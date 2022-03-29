@@ -6,34 +6,59 @@ and video views are visualized as a snake crawling over the unicorn display. One
 If you don't have that many views you can set a scaling factor - for example we can retrieve the statistics
 over the last week; and display them over 5 minutes - then refresh the statistics and play them again for 5 minutes.
 
+Unicorn analytics also supports operating in API mode, with a REST/WS API to control visualizations. This can be paired with the 
+eve.json events shipper to visualize network events.
+
 ![sample image from internet](https://thumbs.gfycat.com/ConventionalFrightenedBorzoi-size_restricted.gif)
 
 GIF of me running the unicorn-analytics on a Raspberry PI 3, replaying page loads and youtube views for the last week over 5 minutes. I used the configuration that is checked in here: [unicorn-analytics/config](https://github.com/codingchili/unicorn-analytics/tree/master/config)
 
 Related project: [pi-zero-ethermeter](https://github.com/codingchili/pi-zero-ethermeter)
 
-# Setup
-You need at least one raspberry pi with a unicorn HAT. 
+# Requirements
+
+You need at least one raspberry pi with a unicorn HAT.
 The raspberry pi needs python 3.5+ to support await/async.
 
 Modules that **needs** to be installed,
 
 ```console
-pip3 install oauth2client aiohttp
-pip3 install unicornhathd numpy
+pip install -r requirements.txt
 ```
 
-- aiohttp: to asynchronously update the statistics without disturbing the animations.
-- oauth2client: used to retrieve oauth2 tokens from gooooogle.
-- httplib2: to update the access token when it expires its a bit messy so we didn't implement this with aiohttp.
+# Setup for api mode
+
+First run the unicorn in api mode, this starts the ws and http api's.
+```
+python -m unicorn.run --server --port 9990
+```
+
+Then optionally run the eve.json shipper for the api mode, supports ws:// and http://.
+```
+python -m shipper.eve --file ./eve.json --server ws://localhost:9990 --token <token>
+```
+
+Check the logs for more information and to ensure the application is operational. 
+
+### Configuration
+For security a token is required to communicate with the API endpoints. The token is
+generated on startup in api mode and logged, alternatively configured in `config/server.json`.
+
+# Setup for analytics/youtube
+
+The following modules are used for authentication.
+
+- oauth2client: used to retrieve oauth2 tokens from google.
+- httplib2: to update the oauth token when expired.
+
+Note: the oauth token is for google communications. The token configured in `config/server.json` is just
+used for the server api, when running in api mode.
 
 Now is a good time to **configure your google APIs**, see the section on **Configuration**.
 
 To start it all up run,
 ```console
-git clone https://github.com/codingchili/unicorn-analytics
-cd unicorn-analytics
-python -m unicorn.run
+python -m unicorn.run --analytics --youtube
 ```
 
 Make sure you have configured everything first :smirk:
@@ -41,15 +66,10 @@ Make sure you have configured everything first :smirk:
 The first time it is launched it will ask you to open your browser and allow third party access.
 If you don't have a browser available on your PI, please run as follows:
 ```
-python -m unicorn.run --noauth_local_webserver
+python -m unicorn.run (...) --noauth_local_webserver
 ```
 
 And open your browser on another machine.
-
-# Supported API's
-
-- Google Analytics
-- YouTube Analytics
 
 ### Configuration
 Perform the following and update `config/analytics.json` and `config/youtube.json`
