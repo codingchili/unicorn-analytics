@@ -30,7 +30,7 @@ class Visualizer:
     @staticmethod
     def filter_python(python):
         """ indicates if the python is alive and well. """
-        return not python.remove
+        return python.active
 
     def close(self):
         unicornhathd.off()
@@ -51,21 +51,21 @@ class Python:
     """ Pythons slither across the LED matrix gracefully: code adapted from Pimoroni examples. """
 
     def __init__(self, canvas, color, length=3, direction='left'):
-        self.position = (0, random.randint(0, 16))
+        self.position = (0, random.randint(0, 16)) if direction in ['left', 'right'] else (random.randint(0, 16), 0)
         self.velocity = self.get_velocity(direction)
-        self.remove = False
+        self.active = True
         self.length = length
         self.tail = []
-        self.colour_head = (color[0], color[1], color[2])
-        self.colour_tail = (int(color[0] / 3), int(color[1] / 3), int(color[2] / 3))
+        self.color_head = (color[0], color[1], color[2])
+        self.color_tail = (int(color[0] / 4), int(color[1] / 4), int(color[2] / 4))
         self.canvas = canvas
 
-    def get_colour(self, x, y):
+    def get_color(self, x, y):
         """ gets the color of the head or tail, depending on the given coordinates. """
         if (x, y) == self.position:
-            return self.colour_head
+            return self.color_head
         elif (x, y) in self.tail:
-            return self.colour_tail
+            return self.color_tail
 
     def draw(self):
         """ renders the snake onto the unicorn hat HD. """
@@ -74,13 +74,13 @@ class Python:
         for position in [self.position] + self.tail:
             x, y = position
 
-            if x < 16 and y < 16:
-                r, g, b = self.get_colour(x, y)
+            if 0 <= x < 16 and 0 <= y < 16:
+                r, g, b = self.get_color(x, y)
                 self.canvas.set_pixel(x, y, r, g, b)
                 none_drawable = False
 
         if none_drawable:
-            self.remove = True
+            self.active = False
 
     @staticmethod
     def get_velocity(direction):
