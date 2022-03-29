@@ -84,7 +84,6 @@ async def process(line):
             request["color"] = color_proto(event['proto'], event.get('app_proto', 'failed'))
             request["reason"] = "eve-shipper"
             request["token"] = args.token
-            print(request)
             await write(request)
     except Exception as e:
         logger.warning(f"event error: '{yellow(str(e))}'")
