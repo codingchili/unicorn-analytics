@@ -54,9 +54,9 @@ async def process(line):
         data = json.loads(line)
         # process, filter etc.
         events += 1
-        data["length"] = 3
-        data["color"] = '#ff00cc'
-        data["direction"] = 'right'
+        #data["length"] = 3
+        #data["color"] = '#ff00cc'
+        #data["direction"] = 'right'
         data["reason"] = "testing the api"
         data["token"] = args.token
         await post(data)

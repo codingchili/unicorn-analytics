@@ -92,3 +92,11 @@
 {"salty_json": true}
 {"salty_json": true}
 {"salty_json": true}
+{'color':'#ff00cc', 'length':3, 'direction': 'right'}
+{"color":"#ff00cc", "length":3, "direction": "right"}
+{"color":"#ff00cc", "length":3, "direction": "right"}
+{"color":"#ff00cc", "length":3, "direction": "right"}
+{"color":"#ff00cc", "length":3, "direction": "right"}
+{"color":"#00ff00", "length":3, "direction": "right"}
+{"color":"#00ff00", "length":5, "direction": "right"}
+{"color":"#ffff00", "length":5, "direction": "right"}
