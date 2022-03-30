@@ -65,21 +65,32 @@ def color_proto(proto, app):
     return config["default"]["color"]
 
 
+def length(event):
+    if 'flow' in event:
+        packets = event['flow']['pkts_toserver'] + event['flow']['pkts_toclient']
+        # one per 100 packets, plus one.
+        return int(packets / 100) + 1
+    elif 'fileinfo' in event:
+        # one per 10KB, plus one.
+        return int(event["fileinfo"]["size"] / 10_000) + 1
+    else:
+        return 1
+
+
 async def process(line):
     global events
     try:
         event = json.loads(line)
         request = {}
-        events += 1
 
-        if 'flow' in event:
-            packets = event['flow']['pkts_toserver'] + event['flow']['pkts_toclient']
-            request["length"] = min(int(packets / 100) + 2, 10)
+        if event["event_type"] in ['flow', 'fileinfo']:
+            request["length"] = min(length(event), 10)
             request["direction"] = 'up' if private_ip(event["src_ip"]) else 'down'
             request["color"] = color_proto(event['proto'], event.get('app_proto', 'failed'))
             request["reason"] = f"eve-[{event['proto']}]-[{event['app_proto']}]"
             request["token"] = args.token
-            await write(request)
+            events += 1
+        await write(request)
     except Exception as e:
         logger.warning(f"event error: '{yellow(str(e))}'")
 
