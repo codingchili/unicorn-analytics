@@ -81,7 +81,7 @@ async def process(line):
     global events
     try:
         event = json.loads(line)
-        event_type = ["event_type"]
+        event_type = event["event_type"]
         request = {}
 
         if event_type in ['flow', 'fileinfo', 'tls']:
