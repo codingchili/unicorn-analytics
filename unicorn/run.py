@@ -6,11 +6,15 @@ from unicorn.util.ansi import *
 from unicorn.view.engine import close as close_views, start as start_views
 from unicorn.server.api import start as start_server
 
-parser = argparse.ArgumentParser(description='Unicorn Analytics.')
-parser.add_argument('--server', help='enable the blinkt api server.', action='store_const', const=True)
-parser.add_argument('--youtube', help='enable the youtube analytics view.', action='store_const', const=True)
-parser.add_argument('--analytics', help='enable the google analytics view.', action='store_const', const=True)
-parser.add_argument('--port', help='port to use when server is enabled. (9990)', nargs='?', const=1, default=9990)
+parser = argparse.ArgumentParser(description=green('Unicorn Analytics.'))
+
+api = parser.add_argument_group(magenta('API Server'))
+api.add_argument('--server', help='enable the blinkt api server.', action='store_const', const=True)
+api.add_argument('--port', help=f"port to use when server is enabled. ({cyan('9990')})", nargs='?', const=1, default=9990)
+
+analytics = parser.add_argument_group(magenta('Google Analytics'))
+analytics.add_argument('--youtube', help='enable the youtube analytics view.', action='store_const', const=True)
+analytics.add_argument('--analytics', help='enable the google analytics view.', action='store_const', const=True)
 
 logging.basicConfig(format=f'{magenta("%(asctime)s")} [%(levelname)s] %(message)s', level=logging.INFO)
 logger = logging.getLogger()
