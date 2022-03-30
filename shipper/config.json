@@ -1,0 +1,33 @@
+{
+  "default": {
+    "color": "#242424"
+  },
+  "protocols": {
+    "UDP": {
+      "color": "#00eeff"
+    },
+    "TCP": {
+      "color": "#00ff00"
+    },
+    "ICMP": {
+      "color": "#ffb500"
+    },
+    "IPv6-ICMP": {
+      "color": "#ffb500"
+    }
+  },
+  "applications": {
+    "dhcp": {
+      "color": "#ffb500"
+    },
+    "dns": {
+      "color": "#ff0000"
+    },
+    "tls": {
+      "color": "#c90076"
+    },
+    "http": {
+      "color": "#b75420"
+    }
+  }
+}

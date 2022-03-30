@@ -21,6 +21,10 @@ args = parser.parse_args()
 POLL_INTERVAL = 0.02
 events = 0
 
+file = open('config.json', 'r')
+config = json.load(file)
+file.close()
+
 # note this is not perfect for the 172.16.x.x private range.
 private_pattern = re.compile('(192\\.168.*)|(10\\..*)|(172\\.[1-3]+.*)')
 
@@ -50,24 +54,15 @@ def private_ip(ip):
 
 
 def color_proto(proto, app):
-    # move to configuration.
-    app_colors = {
-        "dhcp": "#ffb500",  # yellow
-        "dns": "#ff0000",  # red
-        "tls": "#c90076",  # pink
-        "http": "#ff0000"  # red
-    }
-    proto_colors = {
-        "UDP": "#00eeff",  # blue
-        "TCP": "#00ff00",  # green
-        "ICMP": "#ffb500",  # yellow
-        "IPv6-ICMP": "#ffb500"  # yellow
-    }
-    if app in app_colors:
-        return app_colors[app]
-    elif proto in proto_colors:
-        return proto_colors[proto]
-    return "#242424"
+    global config
+    applications = config['applications']
+    protocols = config['protocols']
+
+    if app in applications:
+        return applications[app]["color"]
+    elif proto in protocols:
+        return protocols[proto]["color"]
+    return config["default"]["color"]
 
 
 async def process(line):
@@ -77,7 +72,7 @@ async def process(line):
         request = {}
         events += 1
 
-        if 'flow' in event and 'proto' in event and event['event_type'] == 'flow':
+        if 'flow' in event:
             packets = event['flow']['pkts_toserver'] + event['flow']['pkts_toclient']
             request["length"] = min(int(packets / 100) + 2, 10)
             request["direction"] = 'up' if private_ip(event["src_ip"]) else 'down'
