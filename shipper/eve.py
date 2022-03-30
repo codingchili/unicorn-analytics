@@ -77,7 +77,7 @@ async def process(line):
             request["length"] = min(int(packets / 100) + 2, 10)
             request["direction"] = 'up' if private_ip(event["src_ip"]) else 'down'
             request["color"] = color_proto(event['proto'], event.get('app_proto', 'failed'))
-            request["reason"] = "eve-shipper"
+            request["reason"] = f"eve-[{event['proto']}]-[{event['app_proto']}]"
             request["token"] = args.token
             await write(request)
     except Exception as e:
