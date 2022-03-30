@@ -90,7 +90,7 @@ async def process(line):
             request["reason"] = f"eve-[{event['proto']}]-[{event['app_proto']}]"
             request["token"] = args.token
             events += 1
-        await write(request)
+            await write(request)
     except Exception as e:
         logger.warning(f"event error: '{yellow(str(e))}'")
 
