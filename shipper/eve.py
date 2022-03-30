@@ -81,14 +81,14 @@ async def process(line):
     global events
     try:
         event = json.loads(line)
-        type = ["event_type"]
+        event_type = ["event_type"]
         request = {}
 
-        if type in ['flow', 'fileinfo', 'tls']:
+        if event_type in ['flow', 'fileinfo', 'tls']:
             request["length"] = min(length(event), 10)
             request["direction"] = 'up' if private_ip(event["src_ip"]) else 'down'
-            request["color"] = color_proto(event['proto'], event.get('app_proto', type))
-            request["reason"] = f"eve-[{event['proto']}]-[{event.get('app_proto', type)}]"
+            request["color"] = color_proto(event['proto'], event.get('app_proto', event_type))
+            request["reason"] = f"eve-[{event['proto']}]-[{event.get('app_proto', event_type)}]"
             request["token"] = args.token
             events += 1
             await write(request)
