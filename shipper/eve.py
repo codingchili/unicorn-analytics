@@ -21,7 +21,7 @@ args = parser.parse_args()
 POLL_INTERVAL = 0.02
 events = 0
 
-file = open('config.json', 'r')
+file = open('shipper/config.json', 'r')
 config = json.load(file)
 file.close()
 
